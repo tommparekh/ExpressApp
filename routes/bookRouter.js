@@ -30,9 +30,35 @@ function routes(Book) {
       book.genre = req.body.genre;
       book.read = req.body.read;
 
+      // This is synchronous save() call. Should be avoided with asynchronous call. See .Patch() function.
       book.save();
       return res.json(book);
-    });
+    })
+
+    .patch((req,res) => {
+      const {book} = req;
+
+      // we dont want to update (patch) the Id of a record in mongodb. If only Id is present in request.body, then remove it.
+      if(req.body._id) {
+        delete req.body._id;
+      }
+
+      Object.entries(req.body).forEach(item => {
+        const key = item[0];
+        const value = item[1];
+        book[key] = value;
+      });
+
+      // save data asynchronously.
+      book.save((err) => {
+        if (err) {
+          return res.send(err);
+        }
+
+        return res.json(book);
+      });
+
+    })
 
   //curl -d '{"title": "Rich Dad Poor Dad","genre": "Financial Literacy","author": "Robart Kiosakey"}' -H "Content-Type: application/json" -X POST http://localhost:4000/api/books
 
