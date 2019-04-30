@@ -60,6 +60,16 @@ function routes(Book) {
 
     })
 
+    .delete((req,res) =>  {
+      req.book.remove( (err) => {
+        if(err) {
+          res.send(err);
+        }
+
+        res.sendStatus(204);
+      });
+    });
+
   //curl -d '{"title": "Rich Dad Poor Dad","genre": "Financial Literacy","author": "Robart Kiosakey"}' -H "Content-Type: application/json" -X POST http://localhost:4000/api/books
 
 
