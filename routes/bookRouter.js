@@ -12,6 +12,22 @@ function routes(Book) {
 
         return res.json(book);
       });
+    })
+
+    .put((req,res) => {
+      Book.findById(req.params.bookId, (err, book) => {
+        if (err) {
+          res.send(err);
+        }
+
+        book.title = req.body.title;
+        book.author = req.body.author;
+        book.genre = req.body.genre;
+        book.read = req.body.read;
+
+        book.save();
+        return res.json(book);
+      });
     });
 
   //curl -d '{"title": "Rich Dad Poor Dad","genre": "Financial Literacy","author": "Robart Kiosakey"}' -H "Content-Type: application/json" -X POST http://localhost:4000/api/books
