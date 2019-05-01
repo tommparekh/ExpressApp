@@ -1,7 +1,10 @@
 const express = require('express');
 
+const bookController = require('../controllers/bookController')
+
 function routes(Book) {
   const bookRouter = express.Router();
+  const controller = bookController(Book);
 
   // Middleware is placed using .use method. All it does is find the book from request (bookId). If found, set it in request, otherwise send error msg.
   bookRouter.use('/books/:bookId', (req, res, next) => {
@@ -74,32 +77,9 @@ function routes(Book) {
 
 
   bookRouter.route('/books')
-    .post((request, response) => {
-      const book = new Book(request.body);
-      console.log(book);
-      book.save();
+    .post(controller.post)
 
-      return response.status(201).json(book);
-    })
-
-    .get((req, res) => {
-      //  let query = {genre: 'Fantacy'};
-      //  const {query} = req;
-      //  console.log(req);
-
-      const query = {};
-      if (req.query.genre) {
-        query.genre = req.query.genre;
-      }
-
-      Book.find(query, (err, books) => {
-        if (err) {
-          res.send(err);
-        }
-
-        return res.json(books);
-      });
-    });
+    .get(controller.get);
 
   return bookRouter;
 }
