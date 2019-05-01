@@ -23,17 +23,32 @@ function bookController(Book) {
     //  const {query} = req;
     //  console.log(req);
 
-    const query = {};
-    if (req.query.genre) {
-      query.genre = req.query.genre;
+    /** This code can be optimized with destructuring.
+    {
+      const query = {};
+      if (req.query.genre) {
+        query.genre = req.query.genre;
+      }
     }
+    */
 
+    const {query} = req;
+
+    // Book.find((err, books) => {
     Book.find(query, (err, books) => {
       if (err) {
         res.send(err);
       }
 
-      return res.json(books);
+      // extending code for hypermedia
+      const returnBooks = books.map((book) => {
+        const newBook = book.toJSON();
+        newBook.links = {};
+        newBook.links.self = `http://${req.headers.host}/api/books/${book._id}`;
+        return newBook;
+      });
+
+      return res.json(returnBooks);
     });
   }
 
