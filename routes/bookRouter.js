@@ -6,6 +6,7 @@ function routes(Book) {
   const bookRouter = express.Router();
   const controller = bookController(Book);
 
+  // Below code is NOT a controller patter, but a middleware.
   // Middleware is placed using .use method. All it does is find the book from request (bookId). If found, set it in request, otherwise send error msg.
   bookRouter.use('/books/:bookId', (req, res, next) => {
     Book.findById(req.params.bookId, (err, book) => {
@@ -76,6 +77,7 @@ function routes(Book) {
   //curl -d '{"title": "Rich Dad Poor Dad","genre": "Financial Literacy","author": "Robart Kiosakey"}' -H "Content-Type: application/json" -X POST http://localhost:4000/api/books
 
 
+  // below code uses Controller patter.
   bookRouter.route('/books')
     .post(controller.post)
 
