@@ -24,7 +24,15 @@ function routes(Book) {
 
   bookRouter.route('/books/:bookId')
     // book is already setup in req object by .use() middleware. Just return it.  
-    .get((req, res) => res.json(req.book))
+    .get((req, res) => {
+
+      const returnBook = req.book.toJSON();
+      returnBook.links = {};
+      const genre = req.book.genre.replace(' ','%20');  // replace space in genre name (eg Science Fiction) with %20 for HTML rendering
+      returnBook.links.FilterByThisGenre = `http://${req.headers.host}/api/books/?genre=${genre}`;
+
+      res.json(returnBook);
+    })
 
     // book is already setup in req object by .use() middleware. Just save it.
     .put((req, res) => {
